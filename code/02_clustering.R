@@ -1,6 +1,5 @@
 library("mclust")
 library("recipes")
-library("cluster")
 
 
 data = readRDS("data.rds")
