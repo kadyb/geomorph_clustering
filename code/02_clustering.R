@@ -21,7 +21,7 @@ ncores = parallelly::availableCores(omit = 1)
 if (length(clusters) < ncores) ncores = length(clusters)
 future::plan(multisession, workers = ncores)
 
-# define parallel function in new environment
+# define parallel function in local environment
 mclust_par = local(function(data, G) {
   mdl = Mclust(data = data, G = G)
   # reduce model size
