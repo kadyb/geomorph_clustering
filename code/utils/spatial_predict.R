@@ -12,15 +12,17 @@ spatial_predict = function(x, transformator, mdl) {
   }
 
   pred = recipes::bake(transformator, df, composition = "data.frame")
+  rm(df)
   pred = predict(mdl, pred)$classification # TODO: make it parallel
 
   if (NA_found) {
     full_vec = rep(NA_integer_, prod(dim(x)))
     full_vec[-na_ids] = pred
-    pred = full_vec
+    pred = cbind(xy, full_vec)
+  } else {
+    pred = cbind(xy, pred)
   }
 
-  pred = cbind(xy, pred)
   pred = st_as_stars(pred, dims = c("x", "y"))
   st_crs(pred) = st_crs(x)
   return(pred)
