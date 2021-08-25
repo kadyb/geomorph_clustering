@@ -16,12 +16,14 @@ varnames = tolower(varnames)
 set.seed(123)
 n = 5000000L
 
-x_smp = sample(seq.int(as.integer(st_bbox(rasters)[["xmin"]]),
-                       as.integer(st_bbox(rasters)[["xmax"]]),
-                       31L), n, replace = TRUE)
-y_smp = sample(seq.int(as.integer(st_bbox(rasters)[["ymin"]]),
-                       as.integer(st_bbox(rasters)[["ymax"]]),
-                       31L), n, replace = TRUE)
+x_smp = seq.int(as.integer(st_bbox(rasters)[["xmin"]]),
+                as.integer(st_bbox(rasters)[["xmax"]]),
+                31L)
+x_smp = sample(x_smp, n, replace = TRUE)
+y_smp = seq.int(as.integer(st_bbox(rasters)[["ymin"]]),
+                as.integer(st_bbox(rasters)[["ymax"]]),
+                31L)
+y_smp = sample(y_smp, n, replace = TRUE)
 pts = sf::st_as_sf(data.frame(x = x_smp, y = y_smp), coords = c("x", "y"),
                crs = st_crs(rasters))
 rm(x_smp, y_smp)
