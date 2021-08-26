@@ -22,14 +22,16 @@ if (length(clusters) < ncores) ncores = length(clusters)
 future::plan(multisession, workers = ncores)
 
 # define parallel function in local environment
-mclust_par = local(function(data, G) {
-  mdl = Mclust(data = data, G = G)
-  # reduce model size
-  mdl$data = mdl$data[0, ] # remove original data
-  mdl$z = mdl$z[0, ] # remove probability
-  mdl$classification = as.integer(mdl$classification)
-  return(mdl)
-})
+mclust_par = local(
+  function(data, G) {
+    mdl = Mclust(data = data, G = G)
+    # reduce model size
+    mdl$data = mdl$data[0, ] # remove original data
+    mdl$z = mdl$z[0, ] # remove probability
+    mdl$classification = as.integer(mdl$classification)
+    return(mdl)
+  }
+)
 
 results = vector("list", length(clusters))
 for (i in seq_along(clusters)) {
