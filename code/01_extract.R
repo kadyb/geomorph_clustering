@@ -15,7 +15,7 @@ names(rasters) = varnames
 n = 5000000
 set.seed(123)
 vals = sf::st_sample(rasters, n)
-vals = as.data.frame(vals, row.names = FALSE)[, -c(1:2)]
+vals = as.data.frame(vals)[, -c(1:2)]
 complete_idx = which(complete.cases(vals))
 vals = vals[complete_idx, ]
 rm(complete_idx)
