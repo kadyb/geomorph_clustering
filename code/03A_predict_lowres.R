@@ -27,8 +27,12 @@ rm(dest)
 mdl = readRDS("GMM_model.rds")
 transformator = readRDS("transformator.rds")
 
-# raster with clusters
 result = spatial_predict(rasters, transformator, mdl)
-plot(result, col = sf.colors(20, categorical = TRUE))
-stars::write_stars(result, "result.tif", options = "COMPRESS=LZW",
-                   type = "UInt16", NA_value = 0)
+
+plot(result["cluster"], col = sf.colors(n = mdl$G, categorical = TRUE))
+plot(result["uncertainty"], breaks = "equal")
+
+stars::write_stars(result["cluster"], "cluster.tif", options = "COMPRESS=LZW",
+                   type = "Byte", NA_value = 0)
+stars::write_stars(result["uncertainty"], "uncertainty.tif",
+                   options = "COMPRESS=LZW", type = "Float32", NA_value = 999)
