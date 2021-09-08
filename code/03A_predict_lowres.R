@@ -6,23 +6,21 @@ source("code/utils/spatial_predict.R")
 
 
 ras_path = list.files("rasters", pattern = "\\.tif$", full.names = TRUE)
-rasters = stars::read_stars(ras_path, along = 3, proxy = TRUE)
-
 varnames = basename(ras_path)
 varnames = substr(varnames, 1, nchar(varnames) - 4)
 varnames = substr(varnames, 4, nchar(varnames))
 varnames = tolower(varnames)
 
-# prepare raster with target geometry
-dest = stars::st_as_stars(sf::st_bbox(rasters), dx = 500, values = 0L)
-dest = do.call(c, lapply(seq_len(dim(rasters)[3]), function(x) dest))
-dest = merge(dest)
+# create virtual raster with lower resolution
+tmp = tempfile(fileext = ".vrt")
+resolution = c("-tr", 1000, 1000)
+resample = c("-r", "nearest")
+gdal_utils(util = "buildvrt", source = ras_path, destination = tmp,
+           options = c(resolution, resample, "-separate"))
 
-# downsample rasters
-rasters = stars::st_warp(rasters, dest, method = "near", use_gdal = TRUE)
+rasters = read_stars(tmp, proxy = FALSE)
 rasters = stars::st_set_dimensions(rasters, 3, values = varnames, names = "var")
 rasters = split(rasters)
-rm(dest)
 
 mdl = readRDS("GMM_model.rds")
 transformator = readRDS("transformator.rds")
