@@ -30,8 +30,8 @@ spatial_predict = function(x, transformator, mdl) {
     raster = cbind(xy, pred, uncertainty)
   }
 
-  raster = st_as_stars(raster, dims = c("x", "y"))
-  st_crs(raster) = st_crs(x)
+  raster = stars::st_as_stars(raster, dims = c("x", "y"))
+  sf::st_crs(raster) = sf::st_crs(x)
   names(raster) = c("cluster", "uncertainty")
   return(raster)
 

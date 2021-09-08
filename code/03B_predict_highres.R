@@ -43,15 +43,15 @@ for (bl in seq_len(nrow(blocks))) {
 # merge tiles for cluster
 tiles_path = list.files("tiles", pattern = "cluster+.+\\.tif$", full.names = TRUE)
 tmp = tempfile(fileext = ".vrt")
-gdal_utils(util = "buildvrt", source = tiles_path, destination = tmp)
-gdal_utils(util = "translate", source = tmp,
-           destination = "clusters.tif",
-           options = c("-co", "COMPRESS=LZW"))
+sf::gdal_utils(util = "buildvrt", source = tiles_path, destination = tmp)
+sf::gdal_utils(util = "translate", source = tmp,
+               destination = "clusters.tif",
+               options = c("-co", "COMPRESS=LZW"))
 
 # merge tiles for uncertainty
 tiles_path = list.files("tiles", pattern = "uncertainty+.+\\.tif$", full.names = TRUE)
 tmp = tempfile(fileext = ".vrt")
-gdal_utils(util = "buildvrt", source = tiles_path, destination = tmp)
-gdal_utils(util = "translate", source = tmp,
-           destination = "uncertainty.tif",
-           options = c("-co", "COMPRESS=LZW"))
+sf::gdal_utils(util = "buildvrt", source = tiles_path, destination = tmp)
+sf::gdal_utils(util = "translate", source = tmp,
+               destination = "uncertainty.tif",
+               options = c("-co", "COMPRESS=LZW"))

@@ -15,10 +15,10 @@ varnames = tolower(varnames)
 tmp = tempfile(fileext = ".vrt")
 resolution = c("-tr", 1000, 1000)
 resample = c("-r", "nearest")
-gdal_utils(util = "buildvrt", source = ras_path, destination = tmp,
-           options = c(resolution, resample, "-separate"))
+sf::gdal_utils(util = "buildvrt", source = ras_path, destination = tmp,
+               options = c(resolution, resample, "-separate"))
 
-rasters = read_stars(tmp, proxy = FALSE)
+rasters = stars::read_stars(tmp, proxy = FALSE)
 rasters = stars::st_set_dimensions(rasters, 3, values = varnames, names = "var")
 rasters = split(rasters)
 
