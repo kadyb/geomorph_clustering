@@ -7,11 +7,14 @@ getBlocks = function(path, x_window, y_window) {
   img_rows = dim(img)[["x"]]
   img_cols = dim(img)[["y"]]
 
-  x_vec = integer()
-  y_vec = integer()
-  nXSize_vec = integer()
-  nYSize_vec = integer()
+  n = ceiling((img_rows / x_window)) * ceiling((img_cols / y_window))
+  
+  x_vec = integer(n)
+  y_vec = integer(n)
+  nXSize_vec = integer(n)
+  nYSize_vec = integer(n)
 
+  i = 1L
   for (x in seq.int(1L, img_rows, y_window)) {
 
     if (x + y_window <= img_rows) {
@@ -28,10 +31,11 @@ getBlocks = function(path, x_window, y_window) {
         nYSize = img_cols - y + 1L
       }
 
-      x_vec = c(x_vec, x)
-      y_vec = c(y_vec, y)
-      nXSize_vec = c(nXSize_vec, nXSize)
-      nYSize_vec = c(nYSize_vec, nYSize)
+      x_vec[i] = x
+      y_vec[i] = y
+      nXSize_vec[i] = nXSize
+      nYSize_vec[i] = nYSize
+      i = i + 1L
     }
 
   }
