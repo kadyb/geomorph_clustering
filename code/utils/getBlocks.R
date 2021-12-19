@@ -14,7 +14,7 @@ getBlocks = function(path, x_window, y_window) {
 
   for (x in seq.int(1L, img_rows, y_window)) {
 
-    if (x + y_window < img_rows) {
+    if (x + y_window <= img_rows) {
       nXSize = y_window
     } else {
       nXSize = img_rows - x + 1L
@@ -22,7 +22,7 @@ getBlocks = function(path, x_window, y_window) {
 
     for (y in seq.int(1L, img_cols, x_window)) {
 
-      if (y + x_window < img_cols) {
+      if (y + x_window <= img_cols) {
         nYSize = x_window
       } else {
         nYSize = img_cols - y + 1L
