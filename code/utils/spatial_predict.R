@@ -1,5 +1,7 @@
 spatial_predict = function(x, transformator, mdl) {
 
+  # note: this function fails if all input cells are NA
+  
   df = as.data.frame(x)
   xy = df[, c(1:2)]
   df = df[, -c(1:2)]
@@ -12,7 +14,7 @@ spatial_predict = function(x, transformator, mdl) {
   }
 
   df = recipes::bake(transformator, df, composition = "data.frame")
-  pred = predict(mdl, df) # TODO: make it parallel
+  pred = predict(mdl, df)
   rm(df)
   uncertainty = numeric(nrow(pred$z))
   for (i in seq_along(uncertainty)) {
