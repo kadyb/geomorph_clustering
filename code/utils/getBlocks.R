@@ -8,7 +8,7 @@ getBlocks = function(path, x_window, y_window) {
   img_cols = dim(img)[["y"]]
 
   n = ceiling((img_rows / x_window)) * ceiling((img_cols / y_window))
-  
+
   x_vec = integer(n)
   y_vec = integer(n)
   nXSize_vec = integer(n)
@@ -41,7 +41,7 @@ getBlocks = function(path, x_window, y_window) {
   }
 
   mat = matrix(c(x_vec, y_vec, nXSize_vec, nYSize_vec), ncol = 4)
-  colnames(mat) = c("x", "y", "nXSize", "nYSize")
+  colnames(mat) = c("nXOff", "nYOff", "nXSize", "nYSize")
 
   return(mat)
 

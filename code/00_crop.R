@@ -1,5 +1,5 @@
 # files
-files = list.files("data", pattern = ".tif", full.names = TRUE)
+files = list.files("raw_rasters", pattern = ".tif", full.names = TRUE)
 mask = "vector/Poland.gpkg"
 
 # parameters

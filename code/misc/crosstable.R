@@ -1,8 +1,8 @@
 library("sf")
 library("stars")
-source("utilis/getLegend.R")
+source("code/utils/getLegend.R")
 
-map_path = "geomorph_Poland.tif"
+map_path = "data/clusters.tif"
 vec_path = "vector/morphogenetic_zones.gpkg"
 vec = sf::read_sf(vec_path, fid_column_name = "FID")
 
@@ -30,13 +30,14 @@ for (i in seq_len(nrow(vec))) {
 
 }
 
-legend = getLegend("colors.qml")
+legend = getLegend("code/misc/colors.qml")
 rownames(mat) = legend$label
 colnames(mat) = vec$desc
-write.csv2(mat, "crosstable.csv", row.names = TRUE)
+write.csv2(mat, "data/crosstable.csv", row.names = TRUE)
 
 ### entire area ###
 map = stars::read_stars(map_path, proxy = FALSE)
 map[[1]] = as.integer(map[[1]])
 freq = tabulate(map[[1]], nbins = nclus)
+names(freq) = legend$label
 round(prop.table(freq) * 100, 1)

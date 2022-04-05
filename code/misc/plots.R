@@ -3,7 +3,7 @@ library("scales")
 library("ggrepel")
 library("ggplot2")
 library("patchwork")
-source("utilis/getLegend.R")
+source("code/utils/getLegend.R")
 
 scale_trans = trans_new(
   "scale_trans",
@@ -15,11 +15,12 @@ scale_trans = trans_new(
   domain = c(-Inf, Inf)
 )
 
-data = data.frame(readRDS("data.rds"))
-mdl = readRDS("GMM_model.rds")
-transformator = readRDS("transformator.rds")
+data = data.frame(readRDS("data/sample.rds"))
+mdl = readRDS("data/GMM_model.rds")
+transformator = readRDS("data/transformator.rds")
 data_trans = recipes::bake(transformator, data, composition = "data.frame")
-legend = getLegend("colors.qml")
+legend = getLegend("code/misc/colors.qml")
+if (!dir.exists("plots")) dir.create("plots")
 
 cluster_order = c("UME", "UMI", "UMV", "UMS", "UHE",
                   "PRH", "PRMu", "PRMl", "PRLu", "PRLl",
@@ -54,11 +55,11 @@ ggplot(data_long, aes(x = cluster, y = uncertainty)) +
         axis.line = element_line(colour = "black", size = 0.5),
         axis.title = element_text(face = "bold"))
 
-ggsave(filename = "uncertainty.pdf", device = cairo_pdf, height = 3, width = 8,
-       units = "in")
+ggsave(filename = "plots/uncertainty.pdf", device = cairo_pdf,
+       height = 3, width = 8, units = "in")
 
 #### crosstable ####
-crosstable = read.csv2("crosstable.csv")
+crosstable = read.csv2("data/crosstable.csv")
 colnames(crosstable)[1] = "cluster"
 crosstable$cluster = factor(crosstable$cluster, levels = cluster_order)
 
@@ -98,7 +99,7 @@ ggplot(ct_long) +
         axis.line.y = element_blank(),
         aspect.ratio = 1/4)
 
-ggsave(filename = "zones.pdf", device = cairo_pdf, height = 5, width = 8,
+ggsave(filename = "plots/zones.pdf", device = cairo_pdf, height = 5, width = 8,
        units = "in")
 
 #### PCA ####
@@ -109,6 +110,7 @@ cluster_centers = aggregate(data_trans, list(cluster = data$cluster), "mean")
 cluster_centers = cluster_centers[match(legend$value, cluster_centers$cluster), ]
 centers_pca = predict(data_pca, cluster_centers[, -1])
 centers_pca = as.data.frame(centers_pca)
+varnames = colnames(data)[1:10]
 
 pca_arrows = function(prcomp, x, y, k = 0.5) {
   scale_x = (max(prcomp$x[, x]) - min(prcomp$x[, x]) / (max(prcomp$rotation[, x]) - min(prcomp$rotation[, x])))
@@ -119,9 +121,6 @@ pca_arrows = function(prcomp, x, y, k = 0.5) {
   return(data.frame(rot_x, rot_y))
 }
 
-varnames_abb = c("ELEV", "EBAS", "RESE", "LTPI", "RELF",
-                 "SPOS", "SNIS", "MCON", "RUGN", "FLAT")
-
 ## PC1 - PC2
 arrows = pca_arrows(data_pca, x = "PC1", y = "PC2", k = 0.2)
 p1 = ggplot() +
@@ -129,7 +128,7 @@ p1 = ggplot() +
                arrow = arrow(length = unit(0.2, "cm")), color = "red") +
   geom_point(data = centers_pca, aes(x = PC1, y = PC2, color = as.factor(1:20)),
              size = 3, show.legend = FALSE) +
-  geom_text_repel(data = arrows, aes(x = rot_x, y = rot_y, label = varnames_abb),
+  geom_text_repel(data = arrows, aes(x = rot_x, y = rot_y, label = varnames),
                   color = "red", size = 2.2, nudge_y = -0.1, seed = 1) +
   geom_text_repel(data = centers_pca, aes(x = PC1, y = PC2, label = legend$label),
                   size = 2.6, seed = 1) +
@@ -145,8 +144,6 @@ p1 = ggplot() +
         axis.title = element_text(face = "bold"),
         aspect.ratio = 1)
 p1
-ggsave(filename = "PCA_1-2.pdf", device = cairo_pdf, height = 7, width = 8,
-       units = "in")
 
 ## PC1 - PC3
 arrows = pca_arrows(data_pca, x = "PC1", y = "PC3", k = 0.2)
@@ -155,7 +152,7 @@ p2 = ggplot() +
                arrow = arrow(length = unit(0.2, "cm")), color = "red") +
   geom_point(data = centers_pca, aes(x = PC1, y = PC3, color = as.factor(1:20)),
              size = 3, show.legend = FALSE) +
-  geom_text_repel(data = arrows, aes(x = rot_x, y = rot_y, label = varnames_abb),
+  geom_text_repel(data = arrows, aes(x = rot_x, y = rot_y, label = varnames),
                   color = "red", size = 2.2, nudge_y = -0.1, seed = 1) +
   geom_text_repel(data = centers_pca, aes(x = PC1, y = PC3, label = legend$label),
                   size = 2.6, seed = 1) +
@@ -172,15 +169,12 @@ p2 = ggplot() +
         aspect.ratio = 1)
 p2
 
-ggsave(filename = "PCA_1-3.pdf", device = cairo_pdf, height = 7, width = 8,
-       units = "in")
-
 ### variable vs variable ###
 agg = aggregate(data[, 1:10], by = list(cluster = data$cluster), FUN = mean)
 agg = agg[match(legend$value, agg$cluster), ]
 
 # `aspect_diversity` is now `mean convergence`
-p3 = ggplot(agg, aes(x = flatness, y = aspect_diversity, color = as.factor(1:20))) +
+p3 = ggplot(agg, aes(x = FLAT, y = MCON, color = as.factor(1:20))) +
   geom_point(size = 3, alpha = 0.9, show.legend = FALSE) +
   geom_text_repel(aes(label = legend$label), color = "black", size = 2.6, seed = 1) +
   scale_color_manual(values = legend$color) +
@@ -198,7 +192,7 @@ p3 = ggplot(agg, aes(x = flatness, y = aspect_diversity, color = as.factor(1:20)
 p3
 
 # `position` is now `Slope position`
-p4 = ggplot(agg, aes(x = relief, y = position, color = as.factor(1:20))) +
+p4 = ggplot(agg, aes(x = RELF, y = SPOS, color = as.factor(1:20))) +
   geom_point(size = 3, alpha = 0.9, show.legend = FALSE) +
   geom_text_repel(aes(label = legend$label), color = "black", size = 2.6, seed = 1) +
   scale_color_manual(values = legend$color) +
@@ -217,5 +211,5 @@ p4 = ggplot(agg, aes(x = relief, y = position, color = as.factor(1:20))) +
 p4
 
 p1 + p2 + p3 + p4
-ggsave(filename = "cluster_distribution.pdf", device = cairo_pdf,
+ggsave(filename = "plots/cluster_distribution.pdf", device = cairo_pdf,
        height = 8, width = 8, units = "in")

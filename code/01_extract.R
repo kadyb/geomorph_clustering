@@ -9,7 +9,6 @@ rasters = stars::read_stars(ras_path, proxy = TRUE)
 varnames = basename(ras_path)
 varnames = substr(varnames, 1, nchar(varnames) - 4)
 varnames = substr(varnames, 4, nchar(varnames))
-varnames = tolower(varnames)
 names(rasters) = varnames
 
 n = 5000000
@@ -25,4 +24,5 @@ rownames(vals) = NULL
 cor = corrr::correlate(vals)
 corrr::rplot(cor, print_cor = TRUE)
 
-saveRDS(vals, "data.rds")
+if (!dir.exists("data")) dir.create("data")
+saveRDS(vals, "data/sample.rds")

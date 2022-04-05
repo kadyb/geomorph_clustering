@@ -1,18 +1,17 @@
 library("stars")
 library("mclust")
 library("recipes")
-source("utilis/getBlocks.R")
-source("utilis/spatial_predict.R")
+source("code/utils/getBlocks.R")
+source("code/utils/spatial_predict.R")
 
 
-mdl = readRDS("GMM_model.rds")
-transformator = readRDS("transformator.rds")
+mdl = readRDS("data/GMM_model.rds")
+transformator = readRDS("data/transformator.rds")
 
 ras_path = list.files("rasters", pattern = "\\.tif$", full.names = TRUE)
 varnames = basename(ras_path)
 varnames = substr(varnames, 1, nchar(varnames) - 4)
 varnames = substr(varnames, 4, nchar(varnames))
-varnames = tolower(varnames)
 
 blocks = getBlocks(ras_path[1], 5400, 4700)
 
@@ -22,9 +21,7 @@ for (bl in seq_len(nrow(blocks))) {
   # print iteration
   writeLines(paste0(bl, "/", nrow(blocks)))
 
-  rasterio = list(nXOff = blocks[bl, "x"], nYOff = blocks[bl, "y"],
-                  nXSize = blocks[bl, "nXSize"], nYSize = blocks[bl, "nYSize"])
-  tile = stars::read_stars(ras_path, RasterIO = rasterio, proxy = FALSE)
+  tile = stars::read_stars(ras_path, RasterIO = blocks[bl, ], proxy = FALSE)
   names(tile) = varnames
   result = spatial_predict(tile, transformator, mdl)
 
@@ -45,7 +42,7 @@ tiles_path = list.files("tiles", pattern = "cluster+.+\\.tif$", full.names = TRU
 tmp = tempfile(fileext = ".vrt")
 sf::gdal_utils(util = "buildvrt", source = tiles_path, destination = tmp)
 sf::gdal_utils(util = "translate", source = tmp,
-               destination = "clusters.tif",
+               destination = "data/clusters.tif",
                options = c("-co", "COMPRESS=LZW"))
 
 # merge tiles for uncertainty
@@ -53,5 +50,5 @@ tiles_path = list.files("tiles", pattern = "uncertainty+.+\\.tif$", full.names =
 tmp = tempfile(fileext = ".vrt")
 sf::gdal_utils(util = "buildvrt", source = tiles_path, destination = tmp)
 sf::gdal_utils(util = "translate", source = tmp,
-               destination = "uncertainty.tif",
+               destination = "data/uncertainty.tif",
                options = c("-co", "COMPRESS=LZW"))

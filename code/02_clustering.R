@@ -3,15 +3,15 @@ library("future")
 library("recipes")
 
 
-data = readRDS("data.rds")
+data = readRDS("data/sample.rds")
 
 # transform data
 rec = recipes::recipe( ~ ., data = data)
-rec = recipes::step_YeoJohnson(rec, all_numeric(), -flatness)
+rec = recipes::step_YeoJohnson(rec, all_numeric(), -FLAT)
 rec = recipes::step_normalize(rec, all_numeric())
 
 estimates = recipes::prep(rec, training = data, retain = FALSE)
-saveRDS(estimates, "transformator.rds")
+saveRDS(estimates, "data/transformator.rds")
 data_trans = recipes::bake(estimates, data, composition = "data.frame")
 rm(data, rec)
 
@@ -44,4 +44,4 @@ results = future::value(results)
 best = which.max(sapply(results, function(x) {x$bic}))
 results = results[[best]]
 summary(results)
-saveRDS(results, "GMM_model.rds")
+saveRDS(results, "data/GMM_model.rds")
