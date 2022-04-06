@@ -11,3 +11,8 @@ Finally, the model with the highest BIC value is selected.
 The result will be maps with clusters (geomorphological units) and uncertainty.
 5. Run `03B_predict_highres.R` to perform high resolution spatial clustering.
 This operation is performed for **all** data in blocks of the specified size.
+
+## Dataset
+The final high-resolution maps with geomorphological units and uncertainty, Gaussian mixture model and data transformation model, and low-resolution rasters (500 m) with geomorphometric variables are available in the Zenodo repository: https://zenodo.org/record/6415362.
+Note that in the project, rasters with 30 m resolution were used as input data.
+The "*input_rasters*" folder in the archive should be renamed to "*rasters*" to work with the shared code.
