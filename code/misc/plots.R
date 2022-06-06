@@ -213,3 +213,26 @@ p4
 p1 + p2 + p3 + p4
 ggsave(filename = "plots/cluster_distribution.pdf", device = cairo_pdf,
        height = 8, width = 8, units = "in")
+
+#### BIC ####
+bic = read.csv2("bic.csv")
+
+ggplot(bic, aes(x = cluster, y = abs(bic))) +
+  geom_line() +
+  geom_vline(xintercept = c(4, 8, 12, 16), linetype = "dashed") +
+  geom_vline(xintercept = 20, linetype = "dashed", color = "red", size = 0.7) +
+  geom_point() +
+  xlab("Number of clusters") +
+  ylab("BIC") +
+  scale_y_continuous(labels = scales::scientific) +
+  scale_x_continuous(breaks = seq(4, 30, by = 4)) +
+  theme_bw() +
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text = element_text(color = "black"),
+        axis.line = element_line(colour = "black", size = 0.5),
+        axis.title = element_text(face = "bold"))
+
+ggsave(filename = "BIC.pdf", device = cairo_pdf, height = 3, width = 5,
+       units = "in")
