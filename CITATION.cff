@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use data or code from this repository, please cite it as below."
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Dyba"
+    given-names: "Krzysztof"
+    orcid: "https://orcid.org/0000-0002-8614-3816"
+  - family-names: "Jasiewicz"
+    given-names: "Jarosław"
+    orcid: "https://orcid.org/0000-0003-2837-9078"
+  title: "Toward geomorphometry of plains - Country-level unsupervised classification of low-relief areas (Poland)"
+  journal: "Geomorphology"
+  doi: "10.1016/j.geomorph.2022.108373"
+  url: "https://www.sciencedirect.com/science/article/pii/S0169555X22002665"
+  volume: 413
+  pages: 108373
+  year: 2022
+  month: 9
