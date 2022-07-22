@@ -1,6 +1,6 @@
 # Gomorphological clustering
 
-This repository contains the code for “[*Towards geomorphometry of plains - country level unsupervised classification of low-relief areas (Poland)*](https://www.sciencedirect.com/science/article/pii/S0169555X22002665)” article.
+This repository contains the code for “[*Toward geomorphometry of plains - Country-level unsupervised classification of low-relief areas (Poland)*](https://www.sciencedirect.com/science/article/pii/S0169555X22002665)” article.
 
 ## Reproduction
 1. Open the `geomorph_clustering.Rproj` project file in [RStudio](https://rstudio.com/).
